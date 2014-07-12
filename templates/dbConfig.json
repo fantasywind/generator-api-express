@@ -1,0 +1,16 @@
+{<% if (mongodb) {%>
+  "mongo": [{
+    "user": "<%= mongoUser%>",
+    "pass": "<%= mongoPass%>",
+    "database": "<%= mongoDB%>",
+    "host": "<%= mongoHost%>",
+    "port": "<%= mongoPort%>"
+  }]<% }%><% if (mysql) {%>,
+  "mysql": {
+    "user": "<%= mysqlUser%>",
+    "pass": "<%= mysqlPass%>",
+    "database": "<%= mysqlDB%>",
+    "host": "<%= mysqlHost%>",
+    "port": "<%= mysqlPort%>"
+  }<% }%>
+}
