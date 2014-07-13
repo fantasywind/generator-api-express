@@ -45,13 +45,13 @@ Generator.prototype.welcome = function welcome() {
   this.log(yosay());
 }
 
-Generator.prototype.askDatabases = function askDatabases() {
+Generator.prototype.askModules = function askModules() {
   var cb = this.async();
 
   this.prompt([{
     type: 'checkbox',
-    name: 'databases',
-    message: 'Which databases system would you like to use?',
+    name: 'modules',
+    message: 'Which modules would you like to use?',
     choices: [{
       value: 'mongodb',
       name: 'MongoDB (Mongoose)',
@@ -60,11 +60,16 @@ Generator.prototype.askDatabases = function askDatabases() {
       value: 'mysql',
       name: 'MySQL',
       checked: false
+    }, {
+      value: 'socketio',
+      name: 'Socket.io',
+      checked: false
     }]
   }], function (props) {
-    var hasDB = function (mod) { return props.databases.indexOf(mod) !== -1; };
-    this.mongodb = hasDB('mongodb');
-    this.mysql = hasDB('mysql');
+    var hasModule = function (mod) { return props.modules.indexOf(mod) !== -1; };
+    this.mongodb = hasModule('mongodb');
+    this.mysql = hasModule('mysql');
+    this.socketio = hasModule('socketio');
 
     cb();
   }.bind(this));
