@@ -178,6 +178,6 @@ Generator.prototype.createIndex = function createIndex() {
 }
 
 Generator.prototype.copyCommon = function copyCommon() {
-  this.copy('templates/_package.json', this.appPath + "/package.json");
-  this.copy('templates/gitignore', this.appPath + "/.gitignore");
+  this.copy('templates/_package.json', this.appPath + "/../package.json");
+  this.copy('templates/gitignore', this.appPath + "/../.gitignore");
 }

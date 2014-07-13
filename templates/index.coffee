@@ -6,15 +6,20 @@ bodyParser = require 'body-parser'<% if (mongodb) {%>
 mongoose = require 'mongoose'<% }%><% if (mysql) {%>
 mysql = require 'mysql'<% }%><% if (socketio) {%>
 socketIO = require 'socket.io'<% }%>
-<% if (mongodb || mysql) {%>
-dbConfig = require "#{__dirname}/config/db.json"
-<% }%><% if (mongodb) {%>
+<% if (mongodb || mysql) {%>dbConfig = require "#{__dirname}/config/db.json"<% }%><% if (mysql) {%>
+
+# MySQL Connection
+mysqlConn = mysql.createConnection "mysql://#{mysql.user}:#{mysql.pass}@#{mysql.host}:#{mysql.port}/#{mysql.database}"
+mysqlConn.connect()<% }%><% if (mongodb) {%>
+
+# MongoDB Connection
 mongoConnectArr = []
 for mongo in dbConfig.mongo
   mongoConnectArr.push "mongodb://#{mongo.user}:#{mongo.pass}@#{mongo.host}:#{mongo.port}/#{mongo.database}"
-mongoose.connect mongoConnectArr.join(',')<% }%><% if (mysql) {%>
-mysqlConn = mysql.createConnection "mysql://#{mysql.user}:#{mysql.pass}@#{mysql.host}:#{mysql.port}/#{mysql.database}"
-mysqlConn.connect()<% }%>
+mongoose.connect mongoConnectArr.join(',')
+
+# Load MongoDB Models
+# End MongoDB Models<% }%>
 
 app = express()
 
