@@ -3,6 +3,9 @@ path = require 'path'
 logger = require 'morgan'
 cookieParser = require 'cookie-parser'
 session = require 'express-session'
+errorhandler = require 'errorhandler'
+csrf = require 'csurf'
+compression = require 'compression'
 bodyParser = require 'body-parser'<% if (mongodb) {%>
 mongoose = require 'mongoose'<% }%><% if (mysql) {%>
 mysql = require 'mysql'<% }%><% if (socketio) {%>
@@ -37,6 +40,8 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded
   extended: true
 app.use cookieParser()
+app.use csrf()
+app.use compression()
 app.use express.static(path.join(__dirname, '<%= staticPath%>'))
 
 app.use '/', (req, res)->
@@ -50,6 +55,7 @@ app.use (req, res, next)->
   next err
 
 if app.get('env') is 'development'
+  app.use errorhandler()
   app.use (err, req, res, next)->
     res.status err.status or 500
     res.render 'error',
