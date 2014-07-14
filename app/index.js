@@ -190,6 +190,7 @@ Generator.prototype.createIndex = function createIndex() {
 }
 
 Generator.prototype.copyCommon = function copyCommon() {
+  this.copy('templates/static/favicon.ico', this.appPath + "/" + this.staticPath + "/favicon.ico");
   this.copy('templates/lib/session.binder.coffee', this.appPath + "/lib/session.binder.coffee");
   this.copy('templates/_package.json', this.appPath + "/../package.json");
   this.copy('templates/gitignore', this.appPath + "/../.gitignore");

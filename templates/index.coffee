@@ -5,6 +5,7 @@ cookieParser = require 'cookie-parser'
 session = require 'express-session'
 errorhandler = require 'errorhandler'
 csrf = require 'csurf'
+favicon = require 'serve-favicon'
 compression = require 'compression'
 bodyParser = require 'body-parser'<% if (mongodb) {%>
 mongoose = require 'mongoose'<% }%><% if (mysql) {%>
@@ -30,6 +31,7 @@ mongoose.connect mongoConnectArr.join(',')
 app = express()
 
 app.set 'port', process.env.PORT || <%= port%>
+app.use compression()
 app.use logger('dev')
 app.use session
   secret: 'SESSION_SECRET_KEY'
@@ -41,7 +43,7 @@ app.use bodyParser.urlencoded
   extended: true
 app.use cookieParser()
 app.use csrf()
-app.use compression()
+app.use favicon("#{__dirname}/<%= staticPath%>/favicon.ico")
 app.use express.static(path.join(__dirname, '<%= staticPath%>'))
 
 app.use '/', (req, res)->
@@ -67,6 +69,7 @@ app.use (err, req, res, next)->
   res.render 'error',
     message: err.message
     error: {}
+
 <% if (socketio) {%>
 server = require('http').Server app
 io = socketIO server

@@ -10,6 +10,7 @@
     "compression": "^1.0.8",
     "cookie-parser": "^1.0.1",
     "express-session": "^1.6.5",
+    "serve-favicon": "^2.0.1",
     "body-parser": "^1.0.2"<% if (mysql) {%>,
     "mysql": "^2.3.2"<% }%><% if (mongodb) {%>,
     "mongoose": "^3.8.12"<% }%><% if (socketio) {%>,
