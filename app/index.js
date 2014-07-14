@@ -36,6 +36,14 @@ var Generator = module.exports = function Generator(args, options) {
   });
   this.port = parseInt(this.options.port, 10) || 3030;
 
+  this.on('end', function () {
+    this.installDependencies({
+      bower: false,
+      skipInstall: this.options['skip-install'],
+      skipMessage: this.options['skip-message']
+    });
+  });
+
   this.sourceRoot(__dirname + '/../');
 }
 
@@ -80,10 +88,12 @@ Generator.prototype.askMongoInfo = function askMongoInfo() {
     var cb = this.async();
     var prompt = [{
       name: 'mongoUser',
-      message: 'Please type your mongodb username:'
+      message: 'Please type your mongodb username:',
+      default: 'MONGO_USER'
     }, {
       name: 'mongoPass',
       type: 'password',
+      default: 'MONGO_PASS',
       message: 'Please type your mongodb password:'
     }, {
       name: 'mongoDB',
@@ -125,11 +135,13 @@ Generator.prototype.askMysqlInfo = function askMysqlInfo() {
     var cb = this.async();
     var prompt = [{
       name: 'mysqlUser',
-      message: 'Please type your mysql username:'
+      message: 'Please type your mysql username:',
+      default: "MYSQL_USER"
     }, {
       name: 'mysqlPass',
       type: 'password',
-      message: 'Please type your mysql password:'
+      message: 'Please type your mysql password:',
+      default: "MYSQL_PASS"
     }, {
       name: 'mysqlDB',
       type: 'input',
@@ -178,6 +190,7 @@ Generator.prototype.createIndex = function createIndex() {
 }
 
 Generator.prototype.copyCommon = function copyCommon() {
+  this.copy('templates/lib/session.binder.coffee', this.appPath + "/lib/session.binder.coffee");
   this.copy('templates/_package.json', this.appPath + "/../package.json");
   this.copy('templates/gitignore', this.appPath + "/../.gitignore");
 }

@@ -6,6 +6,7 @@
     "express": "^4.2.0",
     "morgan": "^1.0.1",
     "cookie-parser": "^1.0.1",
+    "express-session": "^1.6.5",
     "body-parser": "^1.0.2"<% if (mysql) {%>,
     "mysql": "^2.3.2"<% }%><% if (mongodb) {%>,
     "mongoose": "^3.8.12"<% }%><% if (socketio) {%>,
