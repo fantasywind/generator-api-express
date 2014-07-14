@@ -178,7 +178,7 @@ Generator.prototype.askMysqlInfo = function askMysqlInfo() {
 }
 
 Generator.prototype.createDatabaseConfig = function createDatabaseConfig() {
-  if (this.mongo || this.mysql) {
+  if (this.mongodb || this.mysql) {
     this.appPath = this.env.options.appPath;
     this.template('templates/dbConfig.json', this.appPath + '/config/db.json', this);
   }
