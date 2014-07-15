@@ -16,7 +16,7 @@ sessionBinder = require "#{__dirname}/lib/session.binder"<% }%><% if (mongodb ||
 dbConfig = require "#{__dirname}/config/db.json"<% }%><% if (mysql) {%>
 
 # MySQL Connection
-mysqlConn = mysql.createConnection "mysql://#{mysql.user}:#{mysql.pass}@#{mysql.host}:#{mysql.port}/#{mysql.database}"
+mysqlConn = mysql.createConnection "mysql://#{dbConfig.mysql.user}:#{dbConfig.mysql.pass}@#{dbConfig.mysql.host}:#{dbConfig.mysql.port}/#{dbConfig.mysql.database}"
 mysqlConn.connect()<% }%><% if (mongodb) {%>
 
 # MongoDB Connection
