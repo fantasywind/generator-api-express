@@ -6,8 +6,7 @@ session = require 'express-session'
 errorhandler = require 'errorhandler'
 csrf = require 'csurf'
 favicon = require 'serve-favicon'
-compression = require 'compression'<% if (passport) {%>
-passport = require "#{__dirname}/config/passport"<% }%>
+compression = require 'compression'
 bodyParser = require 'body-parser'<% if (mongodb) {%>
 mongoose = require 'mongoose'<% }%><% if (mysql) {%>
 mysql = require 'mysql'<% }%><% if (socketio) {%>
@@ -26,8 +25,10 @@ for mongo in dbConfig.mongo
   mongoConnectArr.push "mongodb://#{mongo.user}:#{mongo.pass}@#{mongo.host}:#{mongo.port}/#{mongo.database}"
 mongoose.connect mongoConnectArr.join(',')
 
-# Load MongoDB Models
-# End MongoDB Models<% }%>
+# Load MongoDB Models<% if (addPassportUtils) {%>
+<%= classedName%>Model = require "./models/<%= lowerName%>"<% }%>
+# End MongoDB Models<% }%><% if (passport) {%>
+passport = require "#{__dirname}/config/passport"<% }%>
 
 app = express()
 
@@ -48,8 +49,12 @@ app.use passport.session()<% }%>
 app.use csrf()
 app.use favicon("#{__dirname}/<%= staticPath%>/favicon.ico")
 app.use express.static(path.join(__dirname, '<%= staticPath%>'))
-
+<% if (passport) {%>
+# Passport Middleware
+app.use '/auth', passport.router
+<% }%>
 app.use '/', (req, res)->
+  console.log 'csrf', req.csrfToken()
   console.log 'session', req.session
   res.json
     status: true

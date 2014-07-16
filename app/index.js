@@ -250,21 +250,50 @@ Generator.prototype.askPassportDatabase = function askPassportDatabase() {
   }
 }
 
-Generator.prototype.createPassportMysqlTable = function createPassportMysqlTable() {
+Generator.prototype.askPassportDatabaseContainerName = function askPassportDatabaseContainerName() {
+  if (this.passport) {
+    var cb = this.async();
+    this.prompt([{
+      type: 'input',
+      name: 'passportDBModel',
+      message: 'Which table / collection name would you like to storage member info?',
+      default: 'member'
+    }], function (props) {
+      this.passportDBModel = this._.classify(props.passportDBModel);
+
+      cb();
+    }.bind(this));
+  }
+}
+
+Generator.prototype.createPassportDBContainer = function createPassportDBContainer() {
   if (this.passport && this.passportDB === 'mysql') {
     var cb = this.async();
     var mysql = require('mysql');
     var conn = mysql.createConnection("mysql://" + this.mysqlUser + ":" + this.mysqlPass + "@" + this.mysqlHost + ":" + this.mysqlPort + "/" + this.mysqlDB);
     conn.connect();
-    conn.query("CREATE TABLE member (id int(10) NOT NULL AUTO_INCREMENT, email char(80), name char(42), password char(40), salt char(8), PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8", function (err, rows, field) {
+    conn.query("CREATE TABLE " + this.passportDBModel + " (id int(10) NOT NULL AUTO_INCREMENT, email char(80), name char(42), password char(40), salt char(8), PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8", function (err, rows, field) {
       if (err) {
-        this.log(chalk.yellow('Warning: Cannot create MySQL table: member (exist.)'));
+        this.log(chalk.yellow('Warning: Cannot create MySQL table: ' + this.passportDBModel + ' (exist.)'));
       } else {
-        this.log(chalk.green('Success: Create MySQL table: member'));
+        this.log(chalk.green('Success: Create MySQL table: ' + this.passportDBModel));
       }
       conn.destroy();
       cb();
     }.bind(this));
+  }
+
+  if (this.passport && this.passportDB === 'mongodb') {
+    this.fields = {
+      email: 'String',
+      name: 'String',
+      local: '\n    password: String\n    salt: String'
+    };
+    this.addPassportUtils = true
+    this.appPath = this.env.options.appPath;
+    this.classedName = this.passportDBModel;
+    this.lowerName = this.passportDBModel.toLowerCase();
+    this.template('templates/scripts/mongo-model.coffee', this.appPath + "/models/" + this.lowerName + ".coffee", this);
   }
 }
 

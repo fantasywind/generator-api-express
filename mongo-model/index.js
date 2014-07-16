@@ -15,6 +15,7 @@ Generator.prototype.createModelFiles = function createModelFiles() {
   this.generateSource(
     'mongo-model',
     'models',
+    this.options.fields || {name: 'String'},
     this.options['skip-add'] || false
   );
 }

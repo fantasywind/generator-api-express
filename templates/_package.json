@@ -16,6 +16,7 @@
     "mongoose": "^3.8.12"<% }%><% if (socketio) {%>,
     "socket.io": "^1.0.6"<% }%><% if (passport) {%>,
     "passport": "^0.2.0"<% if (passportMods.local) {%>,
+    "bcrypt-nodejs": "^0.0.3",
     "passport-local": "^1.0.0"<% }%><% if (passportMods.facebook) {%>,
     "passport-facebook": "^1.0.3"<% }%><% if (passportMods.twitter) {%>,
     "passport-twitter": "^1.0.2"<% }%><% if (passportMods.google) {%>,

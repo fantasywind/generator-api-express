@@ -44,7 +44,8 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
-Generator.prototype.scriptTemplate = function scriptTemplate (src, dest) {
+Generator.prototype.scriptTemplate = function scriptTemplate (src, dest, fields) {
+  this.fields = fields;
   yeoman.generators.Base.prototype.template.apply(this, [
     src + '.coffee',
     path.join(this.env.options.appPath, dest.toLowerCase()) + '.coffee'
@@ -70,9 +71,9 @@ Generator.prototype.addScriptToIndex = function addScriptToIndex (script) {
   }
 }
 
-Generator.prototype.generateSource = function generateSource (scriptTemplate, targetDirectory, skipAdd) {
+Generator.prototype.generateSource = function generateSource (scriptTemplate, targetDirectory, fields, skipAdd) {
   if (this.mongodb) {
-    this.scriptTemplate(scriptTemplate, path.join(targetDirectory, this.name));
+    this.scriptTemplate(scriptTemplate, path.join(targetDirectory, this.name), fields);
     if (!skipAdd) {
       this.addScriptToIndex(path.join(targetDirectory, this.name));
     }
