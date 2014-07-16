@@ -72,15 +72,88 @@ Generator.prototype.askModules = function askModules() {
       value: 'socketio',
       name: 'Socket.io',
       checked: false
+    }, {
+      value: 'passport',
+      name: 'Passport',
+      checked: false
     }]
   }], function (props) {
     var hasModule = function (mod) { return props.modules.indexOf(mod) !== -1; };
     this.mongodb = hasModule('mongodb');
     this.mysql = hasModule('mysql');
     this.socketio = hasModule('socketio');
+    this.passport = hasModule('passport');
 
     cb();
   }.bind(this));
+}
+
+Generator.prototype.askPassportModule = function askPassportModule() {
+  if (this.passport) {
+    // Check Database
+    if (!this.mysql && !this.mongodb) {
+      var err = new Error('[ERR] You should select a database to saving passport member data.');
+      this.log(chalk.red(err.message));
+      process.exit();
+    }
+
+    var cb = this.async();
+
+    this.prompt([{
+      type: 'checkbox',
+      name: 'modules',
+      message: 'Which passport modules would you like to use?',
+      choices: [{
+        value: 'local',
+        name: 'Local Server',
+        checked: true
+      }, {
+        value: 'facebook',
+        name: 'Facebook',
+        checked: false
+      }, {
+        value: 'twitter',
+        name: 'Twitter',
+        checked: false
+      }, {
+        value: 'google',
+        name: 'Google',
+        checked: false
+      }]
+    }], function (props) {
+      var hasModule = function (mod) { return props.modules.indexOf(mod) !== -1; };
+      this.passportMods = {}
+      this.passportMods.local = hasModule('local');
+      this.passportMods.facebook = hasModule('facebook');
+      this.passportMods.twitter = hasModule('twitter');
+      this.passportMods.google = hasModule('google');
+
+      cb();
+    }.bind(this));
+  }
+}
+
+Generator.prototype.askPassportDatabase = function askPassportDatabase() {
+  if (this.passport) {
+    if (this.mysql && this.mongodb) {
+      var cb = this.async();
+
+      this.prompt([{
+        type: 'list',
+        name: 'passportDatabase',
+        message: 'Which database would you like to storage member data with passport?',
+        choices: ['MySQL', 'MongoDB']
+      }], function (props) {
+        this.passportDB = props.passportDatabase.toLowerCase();
+
+        cb();
+      }.bind(this));
+    } else if (this.mongodb) {
+      this.passportDB = 'mongodb'
+    } else if (this.mysql) {
+      this.passportDB = 'mysql'
+    }
+  }
 }
 
 Generator.prototype.askMongoInfo = function askMongoInfo() {

@@ -12,5 +12,7 @@
     "database": "<%= mysqlDB%>",
     "host": "<%= mysqlHost%>",
     "port": "<%= mysqlPort%>"
+  }<% }%><% if (passport) {%>,
+  "passportDB": "<%= passportDB%>"
   }<% }%>
 }
