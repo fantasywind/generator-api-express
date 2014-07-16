@@ -133,29 +133,6 @@ Generator.prototype.askPassportModule = function askPassportModule() {
   }
 }
 
-Generator.prototype.askPassportDatabase = function askPassportDatabase() {
-  if (this.passport) {
-    if (this.mysql && this.mongodb) {
-      var cb = this.async();
-
-      this.prompt([{
-        type: 'list',
-        name: 'passportDatabase',
-        message: 'Which database would you like to storage member data with passport?',
-        choices: ['MySQL', 'MongoDB']
-      }], function (props) {
-        this.passportDB = props.passportDatabase.toLowerCase();
-
-        cb();
-      }.bind(this));
-    } else if (this.mongodb) {
-      this.passportDB = 'mongodb'
-    } else if (this.mysql) {
-      this.passportDB = 'mysql'
-    }
-  }
-}
-
 Generator.prototype.askMongoInfo = function askMongoInfo() {
   if (this.mongodb) {
     var cb = this.async();
@@ -250,6 +227,47 @@ Generator.prototype.askMysqlInfo = function askMysqlInfo() {
   }
 }
 
+Generator.prototype.askPassportDatabase = function askPassportDatabase() {
+  if (this.passport) {
+    if (this.mysql && this.mongodb) {
+      var cb = this.async();
+
+      this.prompt([{
+        type: 'list',
+        name: 'passportDatabase',
+        message: 'Which database would you like to storage member data with passport?',
+        choices: ['MySQL', 'MongoDB']
+      }], function (props) {
+        this.passportDB = props.passportDatabase.toLowerCase();
+
+        cb();
+      }.bind(this));
+    } else if (this.mongodb) {
+      this.passportDB = 'mongodb'
+    } else if (this.mysql) {
+      this.passportDB = 'mysql'
+    }
+  }
+}
+
+Generator.prototype.createPassportMysqlTable = function createPassportMysqlTable() {
+  if (this.passport && this.passportDB === 'mysql') {
+    var cb = this.async();
+    var mysql = require('mysql');
+    var conn = mysql.createConnection("mysql://" + this.mysqlUser + ":" + this.mysqlPass + "@" + this.mysqlHost + ":" + this.mysqlPort + "/" + this.mysqlDB);
+    conn.connect();
+    conn.query("CREATE TABLE member (id int(10) NOT NULL AUTO_INCREMENT, email char(80), name char(42), password char(40), salt char(8), PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8", function (err, rows, field) {
+      if (err) {
+        this.log(chalk.yellow('Warning: Cannot create MySQL table: member (exist.)'));
+      } else {
+        this.log(chalk.green('Success: Create MySQL table: member'));
+      }
+      conn.destroy();
+      cb();
+    }.bind(this));
+  }
+}
+
 Generator.prototype.createDatabaseConfig = function createDatabaseConfig() {
   if (this.mongodb || this.mysql) {
     this.appPath = this.env.options.appPath;
@@ -260,6 +278,15 @@ Generator.prototype.createDatabaseConfig = function createDatabaseConfig() {
 Generator.prototype.createIndex = function createIndex() {
   this.appPath = this.env.options.appPath;
   this.template('templates/index.coffee', this.appPath + "/index.coffee", this);
+}
+
+Generator.prototype.createPassportFiles = function createPassportFiles() {
+  if (this.passport) {
+    this.template('templates/lib/passport.coffee', this.appPath + "/config/passport.coffee", this);
+    if (this.passportMods.local) {
+      this.template('templates/lib/passport-local.coffee', this.appPath + "/config/passport-local.coffee", this);
+    }
+  }
 }
 
 Generator.prototype.copyCommon = function copyCommon() {

@@ -6,7 +6,8 @@ session = require 'express-session'
 errorhandler = require 'errorhandler'
 csrf = require 'csurf'
 favicon = require 'serve-favicon'
-compression = require 'compression'
+compression = require 'compression'<% if (passport) {%>
+passport = require "#{__dirname}/config/passport"<% }%>
 bodyParser = require 'body-parser'<% if (mongodb) {%>
 mongoose = require 'mongoose'<% }%><% if (mysql) {%>
 mysql = require 'mysql'<% }%><% if (socketio) {%>
@@ -36,17 +37,20 @@ app.use logger('dev')
 app.use session
   secret: 'SESSION_SECRET_KEY'
   resave: true
-  saveUninitialized: true
-  <% if (socketio) {%>store: memoryStore<% }%>
+  saveUninitialized: true<% if (socketio) {%>
+  store: memoryStore<% }%>
 app.use bodyParser.json()
 app.use bodyParser.urlencoded
   extended: true
-app.use cookieParser()
+app.use cookieParser()<% if (passport) {%>
+app.use passport.initialize()
+app.use passport.session()<% }%>
 app.use csrf()
 app.use favicon("#{__dirname}/<%= staticPath%>/favicon.ico")
 app.use express.static(path.join(__dirname, '<%= staticPath%>'))
 
 app.use '/', (req, res)->
+  console.log 'session', req.session
   res.json
     status: true
     msg: 'api server is running'

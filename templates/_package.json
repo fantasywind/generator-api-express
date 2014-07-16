@@ -14,7 +14,12 @@
     "body-parser": "^1.0.2"<% if (mysql) {%>,
     "mysql": "^2.3.2"<% }%><% if (mongodb) {%>,
     "mongoose": "^3.8.12"<% }%><% if (socketio) {%>,
-    "socket.io": "^1.0.6"<% }%>
+    "socket.io": "^1.0.6"<% }%><% if (passport) {%>,
+    "passport": "^0.2.0"<% if (passportMods.local) {%>,
+    "passport-local": "^1.0.0"<% }%><% if (passportMods.facebook) {%>,
+    "passport-facebook": "^1.0.3"<% }%><% if (passportMods.twitter) {%>,
+    "passport-twitter": "^1.0.2"<% }%><% if (passportMods.google) {%>,
+    "passport-google": "^0.3.0"<% }%><% }%>
   },
   "appPath": "<%= appPath%>",
   "engines": {

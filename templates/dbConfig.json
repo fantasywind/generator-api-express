@@ -13,6 +13,5 @@
     "host": "<%= mysqlHost%>",
     "port": "<%= mysqlPort%>"
   }<% }%><% if (passport) {%>,
-  "passportDB": "<%= passportDB%>"
-  }<% }%>
+  "passportDB": "<%= passportDB%>"<% }%>
 }

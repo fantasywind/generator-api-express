@@ -34,9 +34,9 @@ var Generator = module.exports = function Generator() {
 
   // Check MongoDB mode
   try {
-    this.mongo = this.env.options.mongo || require(path.join(process.cwd(), '/package.json')).devDependencies.mongoose;
+    this.mongodb = this.env.options.mongodb || require(path.join(process.cwd(), '/package.json')).devDependencies.mongoose;
   } catch (e) {
-    this.mongo = false;
+    this.mongodb = false;
   }
 
   this.sourceRoot(path.join(__dirname, '/templates/scripts'));
@@ -56,7 +56,6 @@ Generator.prototype.addScriptToIndex = function addScriptToIndex (script) {
     var appPath = this.env.options.appPath;
     var fullPath = path.join(appPath, 'index.coffee');
     var fs = require('fs');
-    console.log('path', fullPath, fs.existsSync(fullPath));
     generatorUtils.rewriteFile({
       file: fullPath,
       needle: '# End MongoDB Models',
@@ -72,7 +71,7 @@ Generator.prototype.addScriptToIndex = function addScriptToIndex (script) {
 }
 
 Generator.prototype.generateSource = function generateSource (scriptTemplate, targetDirectory, skipAdd) {
-  if (this.mongo) {
+  if (this.mongodb) {
     this.scriptTemplate(scriptTemplate, path.join(targetDirectory, this.name));
     if (!skipAdd) {
       this.addScriptToIndex(path.join(targetDirectory, this.name));
