@@ -5,7 +5,7 @@
     "database": "<%= mongoDB%>",
     "host": "<%= mongoHost%>",
     "port": "<%= mongoPort%>"
-  }]<% }%><% if (mysql) {%>,
+  }],<% }%><% if (mysql) {%>
   "mysql": {
     "user": "<%= mysqlUser%>",
     "pass": "<%= mysqlPass%>",

@@ -5,11 +5,11 @@ bcrypt = require 'bcrypt-nodejs'<% }%>
   <%= field%>: <%= fields[field]%><% }%>
 <% if (addPassportUtils) {%>
 # Hash Generator
-<%= classedName%>Schema.methods.validPassword = (password)->
+<%= classedName%>Schema.methods.hashPassword = (password)->
   bcrypt.hashSync password, bcrypt.genSaltSync(8), null
 
 # Check password
 <%= classedName%>Schema.methods.validPassword = (password)->
-  bcrypt.compaseSync password, @local.password<% }%>
+  bcrypt.compaseSync password, @password<% }%>
 
 module.exports = mongoose.model "<%= classedName%>", <%= classedName%>Schema

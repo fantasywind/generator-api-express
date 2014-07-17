@@ -266,13 +266,45 @@ Generator.prototype.askPassportDatabaseContainerName = function askPassportDatab
   }
 }
 
+Generator.prototype.askPassportFacebookAppData = function askPassportFacebookAppData() {
+  if (this.passport && this.passportMods.facebook) {
+    var cb = this.async();
+    this.prompt([{
+      type: 'input',
+      name: 'appID',
+      message: 'Type your facebook app id:',
+      default: 'FACEBOOK_APP_ID'
+    }, {
+      type: 'input',
+      name: 'appSecret',
+      message: 'Type your facebook app secret:',
+      default: 'FACEBOOK_APP_SECRET'
+    }], function (props) {
+      this.facebookAppID = props.appID;
+      this.facebookAppSecret = props.appSecret;
+
+      cb();
+    }.bind(this));
+  }
+}
+
 Generator.prototype.createPassportDBContainer = function createPassportDBContainer() {
   if (this.passport && this.passportDB === 'mysql') {
     var cb = this.async();
     var mysql = require('mysql');
     var conn = mysql.createConnection("mysql://" + this.mysqlUser + ":" + this.mysqlPass + "@" + this.mysqlHost + ":" + this.mysqlPort + "/" + this.mysqlDB);
     conn.connect();
-    conn.query("CREATE TABLE " + this.passportDBModel + " (id int(10) NOT NULL AUTO_INCREMENT, email char(80), name char(42), password char(40), salt char(8), PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8", function (err, rows, field) {
+
+    var optionalFields = []
+    if (this.passportMods.local) {
+      optionalFields.push('password varchar(40)');
+    }
+    if (this.passportMods.facebook) {
+      optionalFields.push('facebookID varchar(32)');
+      optionalFields.push('facebookAccessToken varchar(128)');
+    }
+
+    conn.query("CREATE TABLE " + this.passportDBModel + " (id int(10) NOT NULL AUTO_INCREMENT, email varchar(80), name varchar(42), " + optionalFields.join(', ') + ", UNIQUE (email), PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8", function (err, rows, field) {
       if (err) {
         this.log(chalk.yellow('Warning: Cannot create MySQL table: ' + this.passportDBModel + ' (exist.)'));
       } else {
@@ -287,8 +319,17 @@ Generator.prototype.createPassportDBContainer = function createPassportDBContain
     this.fields = {
       email: 'String',
       name: 'String',
-      local: '\n    password: String\n    salt: String'
+      username: 'String'
     };
+
+    if (this.passportMods.local) {
+      this.fields.password = 'String';
+    }
+    if (this.passportMods.facebook) {
+      this.fields.facebookID = 'String';
+      this.fields.facebookAccessToken = 'String';
+    }
+
     this.addPassportUtils = true
     this.appPath = this.env.options.appPath;
     this.classedName = this.passportDBModel;
@@ -314,6 +355,12 @@ Generator.prototype.createPassportFiles = function createPassportFiles() {
     this.template('templates/lib/passport.coffee', this.appPath + "/config/passport.coffee", this);
     if (this.passportMods.local) {
       this.template('templates/lib/passport-local.coffee', this.appPath + "/config/passport-local.coffee", this);
+    }
+    if (this.passportMods.facebook) {
+      this.template('templates/lib/passport-facebook.coffee', this.appPath + "/config/passport-facebook.coffee", this);
+    }
+    if (this.passportMods.facebook) {
+      this.template('templates/passport.json', this.appPath + "/config/passport.json", this);
     }
   }
 }

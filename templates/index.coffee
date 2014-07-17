@@ -28,7 +28,8 @@ mongoose.connect mongoConnectArr.join(',')
 # Load MongoDB Models<% if (addPassportUtils) {%>
 <%= classedName%>Model = require "./models/<%= lowerName%>"<% }%>
 # End MongoDB Models<% }%><% if (passport) {%>
-passport = require "#{__dirname}/config/passport"<% }%>
+passport = require "#{__dirname}/config/passport.coffee"<% if (passportDB === 'mysql') {%>
+passport.mysqlConn = mysqlConn<% }%><% }%>
 
 app = express()
 

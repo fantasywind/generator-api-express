@@ -1,0 +1,4 @@
+{<% if (passportMods.facebook) {%>
+  "facebookAppID": "<%= facebookAppID%>",
+  "facebookAppSecret": "<%= facebookAppSecret%>"<% }%>
+}
