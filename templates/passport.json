@@ -1,5 +1,5 @@
 {<% if (passportMods.facebook) {%>
   "facebookAppID": "<%= facebookAppID%>",
   "facebookAppSecret": "<%= facebookAppSecret%>",
-  "facebookRedirectUrl": "//localhost:<%= port%>"<% }%>
+  "facebookRedirectUrl": "//localhost:<%= port%>/auth/facebook/callback"<% }%>
 }

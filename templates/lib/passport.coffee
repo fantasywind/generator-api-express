@@ -7,10 +7,11 @@ passport.router = router = express.Router()<% if (passportMods.local) {%>
 router.post '/local', passport.authenticate 'local',
   successRedirect: '/auth/success'
   failureRedirect: '/auth/failed'<% }%><% if (passportMods.facebook) {%>
-router.post '/facebook', passport.authenticate 'facebook',
+router.get '/facebook', passport.authenticate 'facebook',
   scope: [
     'email'
   ]
+router.get '/facebook/callback', passport.authenticate 'facebook',
   successRedirect: '/auth/success'
   failureRedirect: '/auth/failed'<% }%>
 
