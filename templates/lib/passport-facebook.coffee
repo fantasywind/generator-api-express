@@ -8,7 +8,7 @@ module.exports = (passport)->
   passport.use new FacebookStrategy
     clientID: passportConfig.facebookAppID
     clientSecret: passportConfig.facebookAppSecret
-    callbackURL: "http://localhost:<%= port%>"
+    callbackURL: passportConfig.facebookRedirectUrl
   , (accessToken, refreshToken, profile, done)->
     <% if (passportDB === 'mongodb') {%>
     Member.findOne
